@@ -28,7 +28,8 @@ final class Extension
         $extension = new static;
 
         if (!isset($extension->requiredByFeature[$featureName])) {
-            throw new \Exception(sprintf(__('Feature %s is not available.'), $featureName));
+            $msg = function_exists('\__') ? \__('Feature %s is not available.') : 'Feature %s is not available.';
+            throw new \Exception(sprintf($msg, $featureName));
         }
 
         return new Class($extension, $extension->requiredByFeature[$featureName]) {
@@ -129,10 +130,13 @@ final class Extension
         $notFulfilfilled = [];
         self::isCoreRequiredFulfilled($notFulfilfilled);
 
-        if ($notFulfilfilled) throw new \Error(sprintf(
-            __('Some PHP extension required by SLiMS is not loaded : %s'),
-            ucwords(implode(',', $notFulfilfilled))
-        ));
+        if ($notFulfilfilled) {
+            $msg = function_exists('\__') ? \__('Some PHP extension required by SLiMS is not loaded : %s') : 'Some PHP extension required by SLiMS is not loaded : %s';
+            throw new \Error(sprintf(
+                $msg,
+                ucwords(implode(',', $notFulfilfilled))
+            ));
+        }
         
     }
 }
